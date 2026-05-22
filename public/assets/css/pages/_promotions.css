@@ -1,0 +1,55 @@
+.promotions-page {
+    padding: 3rem 0 5rem;
+}
+
+.promotions-page__title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 2.5rem;
+}
+
+.promotions-page__empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+}
+
+.promotions-page__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .promotions-page__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .promotions-page {
+        padding: 2rem 0 3rem;
+    }
+
+    .promotions-page__title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .promotions-page__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .promotions-page__title {
+        font-size: 1.5rem;
+    }
+
+    .promotions-page__grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -22,7 +22,7 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <th>Цена</th>
                     <th>Описание</th>
                     <th>На складе</th>
-                    <th>Новое</th>
+                    <th>Новинка</th>
                     <th>Популярное</th>
                     <th>Рекомендуемое</th>
                     <th>Процент скидки</th>

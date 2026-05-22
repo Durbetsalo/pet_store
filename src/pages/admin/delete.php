@@ -3,7 +3,7 @@
 $table = $_GET["table"];
 $id = $_GET["id"];
 
-$allowed = ['products', 'categories', 'brands', 'orders', 'users', 'reviews', 'promotions'];
+$allowed = ['products', 'categories', 'brands', 'orders', 'users', 'reviews', 'promotions', 'order-statuses'];
 
 if(!in_array($table, $allowed) || $id<=0){
     header('location: /admin');
@@ -22,6 +22,8 @@ if(in_array($table, ["products", "brands", "users"])){
         }
     }
 }
+
+$table = str_replace("-", "_", $table);
 
 $stmt = $connect->prepare("DELETE FROM $table WHERE id = ?");
 $stmt->bind_param("s", $id);

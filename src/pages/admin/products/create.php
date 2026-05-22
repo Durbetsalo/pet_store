@@ -184,7 +184,7 @@ unset($_SESSION["old_input"]);
                 <label class="admin-form__checkbox">
                     <input type="checkbox" name="is_new" value="1" <?= isset($old_input["is_new"]) ? 'checked' : '' ?>>
                     <span class="admin-form__checkbox-box"></span>
-                    Новое
+                    Новинка
                 </label>
                 <label class="admin-form__checkbox">
                     <input type="checkbox" name="is_popular" value="1" <?= isset($old_input["is_popular"]) ? 'checked' : '' ?>>

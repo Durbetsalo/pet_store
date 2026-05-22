@@ -3,7 +3,7 @@ RewriteBase /
 
 RewriteRule ^src/actions/ - [L]
 
-RewriteRule ^src/ - [F,L]
+RewriteRule ^src/ /access-denied [L,R=302]
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ public/index.php [L,QSA]  
+RewriteRule ^ public/index.php [L,QSA]

@@ -14,6 +14,7 @@
 @import "./pages/_orders.css";
 @import "./pages/_brands.css";
 @import "./pages/_product.css";
+@import "./pages/_reviews.css";
 @import "./pages/_catalog.css";
 @import "./pages/_profile.css";
 @import "./pages/_actions.css";
@@ -78,7 +79,8 @@ body {
 }
 
 body::selection {
-    background-color: var(--color-tag);
+    background-color: #6EAE84;
+    color: var(--color-bg);
 }
 
 #root {
@@ -95,6 +97,17 @@ img {
     display: block;
     max-width: 100%;
     pointer-events: none;
+}
+
+input[type="number"] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 button {

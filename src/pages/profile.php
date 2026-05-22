@@ -17,10 +17,11 @@ if (!$user) {
 $active_tab = $_GET["tab"] ?? "info";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $active_tab == "info") {
+    $avatar = $user["img"] ?? "";
     $name = trim($_POST["name"]);
     $email = trim($_POST["email"]);
-    $phone = trim($_POST["phone"]);
     $error = [];
+    $remove_img_input = $_POST["removeImg"];
 
     if (empty($name)) {
         $error["name"] = "Заполните поле";
@@ -31,19 +32,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $active_tab == "info") {
         $error["email"] = "Неверный формат email";
     }
 
+    // echo($remove_img_input == 1);
+    // exit;
+
+    if (empty($_FILES["avatar"]["name"]) && $remove_img_input == 1) {
+        $avatar = null;
+        unlink(__DIR__ . "/../../" . $user["img"]);
+    }
+    if (isset($_FILES["avatar"]) && !empty($_FILES["avatar"]["name"])) {
+        if (!empty($avatar)) {
+            unlink(__DIR__ . "/../../" . $user["img"]);
+        }
+        $file = $_FILES['avatar'];
+
+        $allowed = ["jpg", "jpeg", "png", "webp", "gif"];
+        $ext = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            $error["avatar"] = "Неподдерживаемый формат файла";
+        }
+
+        if ($file["size"] > 1024 * 1024 * 5) {
+            $error["avatar"] = "Файл больше 5МБ";
+        }
+
+        if (!isset($error["avatar"])) {
+            $avatar_name = uniqid("avatar_") . "." . $ext;
+
+            $upload_dir = __DIR__ . "/../../public/uploads/avatar/";
+
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+
+            if (move_uploaded_file($file["tmp_name"], $upload_dir . $avatar_name)) {
+                $avatar = "/public/uploads/avatar/" . $avatar_name;
+            } else {
+                $error["avatar"] = "Ошибка загрузки файла";
+            }
+        }
+    }
+
     if (!empty($error)) {
         $_SESSION["profile_error"] = $error;
         $_SESSION["profile_old"] = [
             "name" => $name,
             "email" => $email,
-            "phone" => $phone
         ];
         header("Location: /profile?tab=info");
         exit;
     }
 
-    $stmt = $connect->prepare("UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ?");
-    $stmt->bind_param("sssi", $name, $email, $phone, $_SESSION["user_id"]);
+    $stmt = $connect->prepare("UPDATE users SET name = ?, email = ?, img = ? WHERE id = ?");
+    $stmt->bind_param("sssi", $name, $email, $avatar, $_SESSION["user_id"]);
     $stmt->execute();
 
     $_SESSION["user_avatar"] = $user["img"];
@@ -60,6 +101,7 @@ $display_name = $profile_old["name"] ?? $user["name"];
 $display_email = $profile_old["email"] ?? $user["email"];
 $display_phone = $profile_old["phone"] ?? ($user["phone"] ?? "");
 $initial = mb_strtoupper(mb_substr($display_name, 0, 1));
+
 ?>
 
 <main class="profile-page">
@@ -105,23 +147,24 @@ $initial = mb_strtoupper(mb_substr($display_name, 0, 1));
             <div class="profile-page__content">
                 <?php if ($active_tab == "info"): ?>
                     <h1 class="profile-page__title">Личная информация</h1>
-                    <div class="profile-page__avatar-wrapper">
-                        <div class="profile-page__avatar">
-                            <?php if ($user["img"]): ?>
-                                <img src="<?= htmlspecialchars($user["img"]) ?>" alt="">
-                            <?php else: ?>
-                                <span><?= $initial ?></span>
-                            <?php endif; ?>
+                    <form action="/profile?tab=info" method="POST" enctype="multipart/form-data" class="profile-page__form">
+                        <div class="profile-page__avatar-wrapper">
+                            <div class="profile-page__avatar">
+                                <input type="file" name="avatar" id="avatarInput" class="profile-page__avatar-input" accept="image/*">
+                                <input type="hidden" id="removeImg" name="removeImg" value="0">
+                                <span id="initial" style="display: <?= isset($user['img']) ? "none" : "block" ?>"><?= $initial ?></span>
+                                <img src="<?= htmlspecialchars($user["img"]) ?>" id="avatarPreview" class="profile-page__avatar-preview <?= isset($user["img"]) ? "is-visible" : "" ?>" alt="">
+                            </div>
+                            <button class="profile-page__avatar-remove <?= $user["img"] ? "is-visible" : "" ?>" id="avatarRemove" type="button">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                                </svg>
+                            </button>
                         </div>
-                        <button class="profile-page__avatar-edit" type="button">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                                <circle cx="12" cy="13" r="4" />
-                            </svg>
-                        </button>
-                    </div>
+                        <?php if (isset($profile_error["avatar"])): ?>
+                            <span class="profile-page__error"><?= $profile_error["avatar"] ?></span>
+                        <?php endif; ?>
 
-                    <form action="/profile?tab=info" method="POST" class="profile-page__form">
                         <div class="profile-page__field <?= isset($profile_error["name"]) ? 'profile-page__field--error' : '' ?>">
                             <label class="profile-page__label">Имя</label>
                             <input type="text" name="name" class="profile-page__input" value="<?= htmlspecialchars($display_name) ?>">
@@ -136,10 +179,6 @@ $initial = mb_strtoupper(mb_substr($display_name, 0, 1));
                                 <span class="profile-page__error"><?= $profile_error["email"] ?></span>
                             <?php endif; ?>
                         </div>
-                        <div class="profile-page__field">
-                            <label class="profile-page__label">Телефон</label>
-                            <input type="text" name="phone" class="profile-page__input" value="<?= htmlspecialchars($display_phone) ?>" id="profilePhone">
-                        </div>
                         <button type="submit" class="btn btn--primary btn--full profile-page__submit">СОХРАНИТЬ ИЗМЕНЕНИЯ</button>
                     </form>
                 <?php endif; ?>
@@ -148,14 +187,33 @@ $initial = mb_strtoupper(mb_substr($display_name, 0, 1));
     </div>
 </main>
 
-<script src="https://unpkg.com/imask"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var phoneInput = document.getElementById('profilePhone');
-        if (phoneInput) {
-            IMask(phoneInput, {
-                mask: '+{7} (000) 000-00-00'
-            });
+    const initial = document.getElementById('initial');
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarRemove = document.getElementById('avatarRemove');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const removeImgInput = document.getElementById('removeImg');
+
+    avatarInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                avatarPreview.src = e.target.result;
+                initial.style.display = "none"
+                avatarPreview.classList.add('is-visible');
+                avatarRemove.classList.add('is-visible');
+            }
+            reader.readAsDataURL(this.files[0]);
         }
+    });
+
+    avatarRemove.addEventListener('click', function(e) {
+        e.stopPropagation();
+        avatarInput.value = '';
+        avatarPreview.src = '';
+        removeImgInput.value = 1
+        initial.style.display = "block"
+        avatarPreview.classList.remove('is-visible');
+        avatarRemove.classList.remove('is-visible');
     });
 </script>

@@ -72,49 +72,96 @@
 
 .profile-page__avatar {
     position: relative;
-    width: 88px;
-    height: 88px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     background-color: var(--color-tag);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.5rem;
     overflow: hidden;
 }
 
 .profile-page__avatar span {
-    font-size: 2rem;
+    font-size: 2.6rem;
     font-weight: 700;
     color: var(--color-primary);
 }
 
-.profile-page__avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.profile-page__avatar-remove.is-visible {
+    display: flex;
+}
+
+.profile-page__avatar-remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 34px;
+    height: 34px;
+    background-color: var(--color-error);
+    border: none;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    border: 2.5px solid var(--color-bg);
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    transition: background-color 0.2s ease;
+}
+
+.profile-page__avatar-remove svg {
+    width: 9px;
+    height: 9px;
+}
+
+.profile-page__avatar-remove svg>path {
+    fill: var(--color-white);
 }
 
 .profile-page__avatar-edit {
-    position: absolute;
-    bottom: 0;
     right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    bottom: 0;
+    z-index: 20;
     width: 28px;
     height: 28px;
     border: none;
+    display: flex;
+    cursor: pointer;
     border-radius: 50%;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
     border: 2.5px solid var(--color-bg);
     background-color: var(--color-primary);
-    color: var(--color-white);
-    cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
 .profile-page__avatar-edit:hover {
     background-color: #1e4a35;
+}
+
+.profile-page__avatar-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.profile-page__avatar-preview.is-visible {
+    display: block;
+}
+
+.profile-page__avatar-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    z-index: 1;
 }
 
 .profile-page__form {

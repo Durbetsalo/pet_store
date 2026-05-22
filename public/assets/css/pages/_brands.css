@@ -1,0 +1,117 @@
+.brands-page {
+    padding: 3rem 0 5rem;
+}
+
+.brands-page__title {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    margin-bottom: 2.5rem;
+}
+
+.brands-page__empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+}
+
+.brands-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.brand-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    background-color: var(--color-white);
+    border-radius: var(--radius-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brand-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.brand-card__image {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+}
+
+.brand-card__image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    pointer-events: auto;
+}
+
+.brand-card__name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: center;
+}
+
+@media (max-width: 1024px) {
+    .brands-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .brands-page {
+        padding: 2rem 0 3rem;
+    }
+
+    .brands-page__title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .brands-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .brand-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .brand-card__image {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .brands-page__title {
+        font-size: 1.5rem;
+    }
+
+    .brands-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .brand-card {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .brand-card__image {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 0.75rem;
+    }
+
+    .brand-card__name {
+        font-size: 0.85rem;
+    }
+}

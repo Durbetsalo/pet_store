@@ -4,6 +4,7 @@ if (!isset($_SESSION["user_id"])) {
     header('Location: /login');
     exit;
 }
+
 $stmt = $connect->prepare("SELECT role FROM users WHERE id=?");
 $stmt->bind_param("i", $_SESSION["user_id"]);
 $stmt->execute();
@@ -11,12 +12,12 @@ $user = $stmt->get_result()->fetch_assoc();
 
 if (!$user) {
     session_destroy();
-    header('Location: /index.php');
+    header('Location: /register');
     exit;
 }
 if (!in_array($user["role"], ['admin', 'manager'])) {
     $_SESSION["user_role"] = "user";
-    header('Location: /index.php');
+    header('Location: /access-denied');
     exit;
 }
 $_SESSION["user_role"] = $user["role"];

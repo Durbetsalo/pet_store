@@ -83,7 +83,7 @@ $has_discount = $product["discount_percent"] && $product["discount_percent"] > 0
                         <span class="badge badge--sale">СКИДКА <?= $product['discount_percent'] ?>%</span>
                     <?php endif ?>
                     <?php if ($product['is_new']): ?>
-                        <span class="badge badge--tag">НОВОЕ</span>
+                        <span class="badge badge--tag">НОВИНКА</span>
                     <?php endif ?>
                     <?php if ($product['is_popular']): ?>
                         <span class="badge badge--tag">ПОПУЛЯРНО</span>

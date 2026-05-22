@@ -109,7 +109,7 @@
 
 .admin-table td {
     color: var(--color-text);
-    max-width: 200px;
+    max-width: 600px;
     word-wrap: break-word;
 }
 
@@ -119,10 +119,6 @@
 }
 
 .admin-table__actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
     white-space: nowrap;
 }
 

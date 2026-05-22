@@ -40,6 +40,11 @@ $routes = [
     'not-found'  => ['file' => 'src/pages/not-found.php', 'title' => '', 'show_header' => false, 'roles' => []],
     'thank-you'  => ['file' => 'src/pages/thank-you.php', 'title' => 'Спасибо за заказ', 'show_header' => false, 'roles' => []],
     'contacts'   => ['file' => 'src/pages/contacts.php', 'title' => 'Контакты', 'show_footer' => true, 'roles' => []],
+    'about'   => ['file' => 'src/pages/about.php', 'title' => 'О магазине', 'show_footer' => true, 'roles' => []],
+    'brands'   => ['file' => 'src/pages/brands.php', 'title' => 'Бренды', 'show_footer' => true, 'roles' => []],
+    'promotions'   => ['file' => 'src/pages/promotions.php', 'title' => 'Акции', 'show_footer' => true, 'roles' => []],
+    'new-products'   => ['file' => 'src/pages/new-products.php', 'title' => 'Новинки', 'show_footer' => true, 'roles' => []],
+    'reviews'   => ['file' => 'src/pages/reviews.php', 'title' => 'Отзывы', 'show_footer' => true, 'roles' => []],
     'access-denied'  => ['file' => 'src/pages/access-denied.php', 'title' => '', 'show_header' => false, 'roles' => []],
 ];
 
@@ -94,6 +99,7 @@ $page_content = ob_get_clean();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?></title>
+    <link rel="icon" href="/public/assets/svgs/favicon.svg" type="image/x-icon">
     <link rel="stylesheet" href="/public/assets/css/main.css">
     <script src="/public/assets/js/add-to-cart.js" defer></script>
     <script src="/public/assets/js/delete-from-cart.js" defer></script>

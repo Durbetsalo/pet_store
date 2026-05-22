@@ -7,7 +7,7 @@
 }
 
 .catalog__title {
-    font-size: 3.3rem;
+    font-size: 2.8rem;
     font-weight: 900;
     color: var(--color-primary);
     margin-bottom: 1.25rem;
@@ -152,14 +152,12 @@
 
 .filters-card__price-input {
     flex: 1;
-    padding: 0.625rem 0.875rem;
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
-    appearance: none;
     width: 100%;
+    appearance: none;
     font-size: 0.875rem;
     font-family: inherit;
     color: var(--color-text);
+    padding: 0.625rem 0.875rem;
     background-color: var(--color-tag);
     border: 1.5px solid transparent;
     border-radius: var(--radius-md);
@@ -173,12 +171,6 @@
 
 .filters-card__price-input:focus {
     border-color: var(--color-primary);
-}
-
-.filters-card__price-input::-webkit-inner-spin-button,
-.filters-card__price-input::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
 }
 
 .filters-card__price-sep {

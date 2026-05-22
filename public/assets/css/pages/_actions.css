@@ -1,12 +1,13 @@
 .admin-action {
+    margin: auto;
+    max-width: 1200px;
     padding: 2rem 0 4rem;
 }
 
 .admin-action__header {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
     margin-bottom: 2rem;
+    flex-direction: column;
 }
 
 .admin-action__back {
@@ -25,17 +26,16 @@
 }
 
 .admin-action__title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--color-primary);
     margin: 0;
+    font-weight: 900;
+    font-size: 2.8rem;
+    color: var(--color-primary);
 }
 
 .admin-form {
+    gap: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    max-width: 800px;
 }
 
 .admin-form__input,
@@ -45,7 +45,7 @@
     font-size: 0.9rem;
     font-family: inherit;
     color: var(--color-text);
-    background-color: var(--color-white);
+    background-color: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     outline: none;
@@ -82,7 +82,7 @@
     flex-wrap: wrap;
 }
 
-.admin-form__row > * {
+.admin-form__row>* {
     flex: 1;
     min-width: 120px;
 }
@@ -119,7 +119,7 @@
     flex-shrink: 0;
 }
 
-.admin-form__checkbox input[type="checkbox"]:checked + .admin-form__checkbox-box {
+.admin-form__checkbox input[type="checkbox"]:checked+.admin-form__checkbox-box {
     background-color: var(--color-accent);
     border-color: var(--color-accent);
 }
@@ -135,7 +135,7 @@
     transition: opacity 0.2s ease;
 }
 
-.admin-form__checkbox input[type="checkbox"]:checked + .admin-form__checkbox-box::after {
+.admin-form__checkbox input[type="checkbox"]:checked+.admin-form__checkbox-box::after {
     opacity: 1;
 }
 
@@ -145,7 +145,7 @@
     font-size: 0.9rem;
     font-family: inherit;
     color: var(--color-text);
-    background-color: var(--color-white);
+    background-color: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     outline: none;
@@ -255,9 +255,9 @@
     right: 0.75rem;
     width: 32px;
     height: 32px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--color-error);
     border: none;
-    border-radius: 50%;
+    border-radius: var(--radius-md);
     display: none;
     align-items: center;
     justify-content: center;
@@ -277,7 +277,7 @@
 .admin-form__upload-remove svg {
     width: 14px;
     height: 14px;
-    color: var(--color-text);
+    color: var(--color-white);
 }
 
 @media (max-width: 768px) {
@@ -293,7 +293,7 @@
         flex-direction: column;
     }
 
-    .admin-form__row > * {
+    .admin-form__row>* {
         min-width: 100%;
     }
 

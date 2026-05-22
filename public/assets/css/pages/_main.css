@@ -21,7 +21,6 @@
 
 .section-label--red {
     color: var(--color-accent);
-    /* background-color: rgba(217, 106, 74, 0.12); */
     background-color: transparent;
 }
 
@@ -31,6 +30,14 @@
     color: var(--color-primary);
     line-height: 1.2;
     letter-spacing: -0.5px;
+}
+
+.section-title--about-shop,
+.section-title--contacts,
+.section-title--reviews,
+.section-title--popular-products,
+.section-title--popular-promotions {
+    font-size: 2.8rem;
 }
 
 .section-header {
@@ -314,18 +321,16 @@
     padding: 3rem 0;
 }
 
-.about-store__header {
-    margin-bottom: 1.5rem;
-}
-
 .about-store__header-wrapper {
-    display: flex;
+    gap: 4rem;
+    display: grid;
     align-items: center;
+    margin-bottom: 4rem;
+    grid-template-columns: 1fr 1fr;
 }
 
 .about-store__text {
     max-width: 700px;
-    margin: 0 auto 2.5rem;
     font-size: 0.95rem;
     color: var(--color-text-secondary);
     line-height: 1.7;
@@ -522,8 +527,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background-color: var(--color-tag);
     color: var(--color-primary);
