@@ -86,8 +86,8 @@ $delivery_cost = 500;
                             <div class="cart-item__actions">
                                 <div class="cart-item__qty">
                                     <button class="cart-item__qty-btn" data-product-id="<?= $cart_item["product_id"] ?>" onclick="decreaseCartItem(this)">−</button>
-                                    <span class="cart-item__qty-value" id="qty_<?= $cart_item["product_id"] ?>"><?= $cart_item["quantity"] ?></span>
-                                    <button class="cart-item__qty-btn" data-product-id="<?= $cart_item["product_id"] ?>" onclick="increaseCartItem(this)">+</button>
+                                    <span id="in_cart_<?= $cart_item["product_id"] ?>" class="cart-item__qty-value" id="in_cart_<?= $cart_item["product_id"] ?>"><?= $cart_item["quantity"] ?></span>
+                                    <button id="plus_button_<?= $cart_item["product_id"] ?>" class="cart-item__qty-btn" data-product-id="<?= $cart_item["product_id"] ?>" onclick="increaseCartItem(this)">+</button>
                                 </div>
                                 <button class="cart-item__delete" data-product-id="<?= $cart_item["product_id"] ?>" onclick="removeCartItem(this)">
                                     <img src="/public/assets/icons/delete-icon.svg" alt="">
@@ -123,18 +123,6 @@ $delivery_cost = 500;
         <?php endif; ?>
     </div>
 </main>
-
-<?php if (!empty($cart_items)): ?>
-    <!-- <div class="cart-page__sticky-bar" id="stickyBar">
-    <div class="container cart-page__sticky-inner">
-        <div class="cart-page__sticky-info">
-            <span class="cart-page__sticky-count"><span id="stickyItemCount"><?= $total_items ?></span> товаров</span>
-            <span class="cart-page__sticky-total" id="stickyTotal"><?= number_format($total_amount + $delivery_cost, 0, '', ' ') ?> ₽</span>
-        </div>
-        <a href="/checkout" class="btn btn--primary btn--sm cart-page__sticky-btn">Перейти к оформлению</a>
-    </div>
-</div> -->
-<?php endif; ?>
 
 <script>
     const selectAll = document.getElementById('selectAll');
@@ -172,10 +160,6 @@ $delivery_cost = 500;
     function formatPrice(num) {
         return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
     }
-
-    // function formatPrice(num) {
-    //     return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
-    // }
 
     function updateCartTotals() {
         const allChecked = itemCheckboxes.every(cb => cb.checked);
@@ -217,11 +201,13 @@ $delivery_cost = 500;
 
         const productId = button.getAttribute("data-product-id");
         const item = document.getElementById('cart_item_' + productId);
-        const qtyEl = document.getElementById('qty_' + productId);
-        const newQty = parseInt(qtyEl.textContent) + 1;
+        const qtyEl = document.getElementById('in_cart_' + productId);
+        console.log(qtyEl);
+        const newQty = parseInt(qtyEl.textContent);
         animateValue(qtyEl, parseInt(qtyEl.textContent), newQty, 400);
         item.dataset.qty = newQty;
 
+        
         const price = parseFloat(item.dataset.price);
         const oldPrice = parseFloat(item.dataset.oldPrice);
         const newTotal = price * newQty;
@@ -251,8 +237,8 @@ $delivery_cost = 500;
             }
         } else {
             const item = document.getElementById('cart_item_' + productId);
-            const qtyEl = document.getElementById('qty_' + productId);
-            const newQty = parseInt(qtyEl.textContent) - 1;
+            const qtyEl = document.getElementById('in_cart_' + productId);
+            const newQty = parseInt(qtyEl.textContent);
             animateValue(qtyEl, parseInt(qtyEl.textContent), newQty, 400);
             item.dataset.qty = newQty;
 
@@ -276,6 +262,7 @@ $delivery_cost = 500;
 
         let formdata = new FormData();
         formdata.append("product_id", productId);
+        formdata.append("delete_all", true);
 
         try {
             let result = await fetch("/src/actions/product/delete-from-cart.php", {

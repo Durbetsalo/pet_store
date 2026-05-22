@@ -90,7 +90,6 @@ $routes = [
     ],
     "orders" => [
         "list" => "/orders/list.php",
-        // "create" => "/orders/create.php",
         "update" => "/orders/update.php",
         "delete" => "/delete.php"
     ],
@@ -102,13 +101,11 @@ $routes = [
     ],
     "reviews" => [
         "list" => "/reviews/list.php",
-        // "create" => "/reviews/create.php",
         "update" => "/reviews/update.php",
         "delete" => "/delete.php"
     ],
     "users" => [
         "list" => "/users/list.php",
-        // "create" => "/users/create.php",
         "update" => "/users/update.php",
         "delete" => "/delete.php"
     ],
@@ -129,16 +126,6 @@ if ($proverka1 || $proverka2 || $proverka3 || $trash) {
     header('Location: /not-found');
     exit;
 }
-
-// if () {
-//     header('Location: /not-found');
-//     exit;
-// }
-
-// if () {
-//     header('Location: /not-found');
-//     exit;
-// }
 
 
 ?>

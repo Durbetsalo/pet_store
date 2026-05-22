@@ -133,10 +133,10 @@ if (isset($_SESSION['user_id'])) {
                                             </div>
                                         <?php else:  ?>
                                             <button data-product-id="<?= $product["id"] ?>" onclick="addToCart(this)" id="cart_button_<?= $product["id"] ?>" class="btn btn--primary btn--sm">В корзину</button>
-                                            <div id="group_<?= $product["id"] ?>" style="display: none;" class="btn btn--primary btn--sm">
-                                                <button data-product-id=<?= $product["id"] ?> onclick="deleteFromCart(this)">-</button>
-                                                <span id="in_cart_<?= $product["id"] ?>">0</span>
-                                                <button id="plus_button_<?= $product["id"] ?>" <?= $product["stock"] == 0 ? "disabled" : "" ?> data-product-id="<?= $product["id"] ?>" onclick="addToCart(this)">+</button>
+                                            <div id="group_<?= $product["id"] ?>" style="display: none; gap: 1rem;" class="btn btn--primary btn--sm">
+                                                <button data-product-id=<?= $product["id"] ?> onclick="deleteFromCart(this)"><img src="/public/assets/icons/minus.svg" alt=""></button>
+                                                <span style="font-weight: 600; font-size: 1rem;" id="in_cart_<?= $product["id"] ?>">0</span>
+                                                <button id="plus_button_<?= $product["id"] ?>" <?= $product["stock"] == 0 ? "disabled" : "" ?> data-product-id="<?= $product["id"] ?>" onclick="addToCart(this)"><img src="/public/assets/icons/plus.svg" alt=""></button>
                                             </div>
                                         <?php endif  ?>
                                     <?php else:  ?>
@@ -152,17 +152,3 @@ if (isset($_SESSION['user_id'])) {
     </div>
 </main>
 
-
-<script>
-    // async function decreaseCartItem(button) {
-    //     let res = await deleteFromCart(button)
-    //     console.log(document.getElementById("plus_button_" + button.getAttribute("data-product-id")).disabled = false);
-    //     document.getElementById("plus_button_" + button.getAttribute("data-product-id")).disabled = false;
-
-    //     if (res.status === "deleted") {
-    //         document.getElementById("cart_button_" + button.getAttribute("data-product-id")).style.display = "block";
-    //         document.getElementById("group_" + button.getAttribute("data-product-id")).style.display = "none";
-
-    //     }
-    // }
-</script>

@@ -142,7 +142,7 @@ unset($_SESSION["old_input"]);
 ?>
 <a href="/admin/<?= $table ?>">Назад</a>
 <form action="" method="POST" enctype="multipart/form-data">
-    <img id="preview" src="<?= htmlspecialchars($old_input["img"] ?? "") ?>" style="max-width: 200px; margin-top: 10px; <?= empty($old_input["img"]) ? "display:none;" : "" ?>"> <!--превью -->
+    <img id="preview" src="<?= htmlspecialchars($old_input["img"] ?? "") ?>" style="max-width: 200px; margin-top: 10px; <?= empty($old_input["img"]) ? "display:none;" : "" ?>">
     <input id="img" type="file" name="img" style="<?= empty($old_input["img"]) ? "" : "display:none;" ?>" value="<?= htmlspecialchars($old_input["img"] ?? "") ?>" accept="image/*" onchange="previewImage(this)">
     <input type="hidden" id="remove_img" name="remove_img" value="0">
     <button type="button" onclick="clearFile()" style="<?= empty($old_input["img"]) ? "display:none;" : "" ?>" id="clear-btn">✕</button>

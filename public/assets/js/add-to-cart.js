@@ -22,6 +22,8 @@ async function addToCart(button, in_cart = false) {
       return data;
     }
 
+    console.log(counter);
+    
     if (data.success == true) {
       counter.textContent = +counter.textContent + 1;
       cart_count.textContent = +cart_count.textContent + 1;
@@ -30,6 +32,7 @@ async function addToCart(button, in_cart = false) {
       console.log(data.error == "stock_limit");
       counter.textContent = data.available;
     } else {
+      
       button.disabled = false;
     }
     if (data.status === "created") {
@@ -51,31 +54,3 @@ async function addToCart(button, in_cart = false) {
   }
   return data;
 }
-
-async function decreaseCartItem(button) {
-  let res = await deleteFromCart(button);
-  document.getElementById(
-    "plus_button_" + button.getAttribute("data-product-id"),
-  ).disabled = false;
-
-  if (res.status === "deleted") {
-    document.getElementById(
-      "cart_button_" + button.getAttribute("data-product-id"),
-    ).style.display = "block";
-    document.getElementById(
-      "group_" + button.getAttribute("data-product-id"),
-    ).style.display = "none";
-  }
-}
-
-// async function increaseCartItem(button) {
-//   let res = await addToCart(button);
-//   if (res.status === "created") {
-//     document.getElementById(
-//       "cart_button_" + button.getAttribute("data-product-id"),
-//     ).style.display = "none";
-//     document.getElementById(
-//       "group_" + button.getAttribute("data-product-id"),
-//     ).style.display = "flex";
-//   }
-// }

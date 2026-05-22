@@ -5,6 +5,7 @@ include_once __DIR__ . "/../../config/config.php";
 include_once __DIR__ . "/../../config/database.php";
 
 $product_id = $_POST['product_id'];
+$delete_all = $_POST['delete_all'] ?? false;
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'redirect' => '/login']);
@@ -34,7 +35,7 @@ $response = [
     "count_cart_items" => count($cart_items)
 ];
 
-if ($cart_item['quantity'] == 1) {
+if ($cart_item['quantity'] == 1 || $delete_all) {
     $quantity = 1;
     $stmt = $connect->prepare("DELETE FROM cart_items WHERE user_id = ? AND product_id = ?");
     $stmt->bind_param("ii", $_SESSION['user_id'], $product_id,);

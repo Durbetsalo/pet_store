@@ -21,10 +21,6 @@
 
                 <div class="hero__side">
                     <div class="hero__banner hero__banner--small hero__banner--green">
-                        <!-- <div class="hero__banner-overlay">
-                            <img src="/public/assets/images/wall-banner.png" alt="">
-                        </div> -->
-
                         <div class="hero__banner-content">
                             <span class="hero__badge hero__badge--dark">НОВИНКИ</span>
                             <h3 class="hero__banner-title">Весенняя коллекция</h3>
@@ -38,9 +34,6 @@
                     </div>
 
                     <div class="hero__banner hero__banner--small hero__banner--white">
-                        <!-- <div class="hero__banner-overlay">
-                            <img src="/public/assets/images/coffe-banner.png" alt="">
-                        </div> -->
                         <div class="hero__banner-content">
                             <span class="hero__badge hero__badge--red">ХИТЫ ПРОДАЖ</span>
                             <h3 class="hero__banner-title hero__banner-title--dark">Выбор покупателей</h3>
