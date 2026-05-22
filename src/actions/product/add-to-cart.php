@@ -25,9 +25,10 @@ $cart_item = $stmt->get_result()->fetch_assoc();
 $quantity = $cart_item['quantity'] ?? 0;
 
 if ($quantity >= $product['stock']) {
-    echo json_encode(['success' => false, 'error' => 'stock_limit', "available" => $cart_item['stock']]);
+    echo json_encode(['success' => false, 'error' => 'stock_limit', "available" => $product['stock']]);
     exit;
 }
+
 
 if (empty($cart_item)) {
     $quantity = 1;
@@ -47,6 +48,12 @@ if (empty($cart_item)) {
 
     
 }
+
+if ($quantity == $product['stock']) {
+    echo json_encode(['success' => true, 'error' => 'stock_limit', "available" => $product['stock']]);
+    exit;
+}
+
 
 if (!empty($product["discount_percent"])) {
     echo json_encode([

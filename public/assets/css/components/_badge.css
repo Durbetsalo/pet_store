@@ -1,0 +1,38 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-tag);
+    color: var(--color-primary);
+    white-space: nowrap;
+}
+
+.badge--pill {
+    border-radius: var(--radius-full);
+}
+
+.badge--sale {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+}
+
+.product-card__badges {
+    gap: 0.5rem;
+    display: flex;
+    z-index: 10;
+    position: absolute;
+    margin: 1rem;
+    flex-direction: column;
+}
+
+.cart-item__badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}

@@ -11,7 +11,6 @@ $result = $stmt->get_result()->fetch_assoc();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST["name"]);
     $email = trim($_POST["email"]);
-    $phone = trim($_POST["phone"]);
     $role = trim($_POST["role"]);
     $img = $result["img"];
     $password = trim($_POST["password"]);
@@ -19,7 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $error = [];
-    //проверка полей
     if (empty($name)) {
         $error["name"] = "Заполните поле";
     }
@@ -37,13 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error["email"] = "Этот email уже зарегистрирован";
         }
     }
-    if (empty($phone)) {
-        $error["phone"] = "Заполните поле";
-    } else if (!preg_match("/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/", $phone)) {
-        $error["phone"] = "Неверный формат телефона";
-    }
 
-    //проверка аватарки
     if ($_FILES["img"]["error"] == UPLOAD_ERR_NO_FILE && $remove_img == 1) {
         if (!empty($result["img"]) && empty($error)) {
             $old_file = __DIR__ . "/../../../.." . $result['img'];
@@ -82,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["old_input"] = [
                 "name" => $name,
                 "email" => $email,
-                "phone" => $phone,
                 "role" => $role,
                 "img" => '',
                 "password" => $password,
@@ -113,7 +104,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["old_input"] = [
             "name" => $name,
             "email" => $email,
-            "phone" => $phone,
             "role" => $role,
             "img" => $img,
             "password" => $password,
@@ -122,12 +112,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
     if (empty($password)) {
-        $stmt = $connect->prepare("UPDATE $tableSQL SET name=?, email=?, phone=?, role=?, img=? WHERE id = ?");
-        $stmt->bind_param("sssssi", $name, $email, $phone, $role, $img,  $_GET["id"]);
+        $stmt = $connect->prepare("UPDATE $tableSQL SET name=?, email=?, role=?, img=? WHERE id = ?");
+        $stmt->bind_param("ssssi", $name, $email, $role, $img,  $_GET["id"]);
     } else {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $connect->prepare("UPDATE $tableSQL SET name=?, email=?, phone=?, role=?, password=?, img=? WHERE id = ?");
-        $stmt->bind_param("ssssssi", $name, $email, $phone, $role, $hashed_password, $img,  $_GET["id"]);
+        $stmt = $connect->prepare("UPDATE $tableSQL SET name=?, email=?, role=?, password=?, img=? WHERE id = ?");
+        $stmt->bind_param("sssssi", $name, $email, $role, $hashed_password, $img,  $_GET["id"]);
     }
 
     $stmt->execute();
@@ -139,91 +129,93 @@ $old_input = $_SESSION["old_input"] ?? $result;
 
 unset($_SESSION["error"]);
 unset($_SESSION["old_input"]);
+
+$hasImage = !empty($old_input["img"]);
 ?>
-<a href="/admin/<?= $table ?>">Назад</a>
-<form action="" method="POST" enctype="multipart/form-data">
-    <img id="preview" src="<?= htmlspecialchars($old_input["img"] ?? "") ?>" style="max-width: 200px; margin-top: 10px; <?= empty($old_input["img"]) ? "display:none;" : "" ?>"> <!--превью -->
-    <input id="img" type="file" name="img" style="<?= empty($old_input["img"]) ? "" : "display:none;" ?>" value="<?= htmlspecialchars($old_input["img"] ?? "") ?>" accept="image/*" onchange="previewImage(this)">
-    <input type="hidden" id="remove_img" name="remove_img" value="0">
-    <button type="button" onclick="clearFile()" style="<?= empty($old_input["img"]) ? "display:none;" : "" ?>" id="clear-btn">✕</button>
-    <?php if (isset($input_error["img"])): ?>
-        <div style="color: red;"><?= $input_error["img"] ?></div>
-    <?php endif ?>
 
+<div class="admin-action">
+    <div class="admin-action__header">
+        <a href="/admin/<?= $table ?>" class="admin-action__back">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Назад
+        </a>
+        <h1 class="admin-action__title">Обновить пользователя</h1>
+    </div>
 
-    <input type="text" name="name" value="<?= htmlspecialchars($old_input["name"] ?? "") ?>">
-    <?php if (isset($input_error["name"])): ?>
-        <div style="color: red;"><?= $input_error["name"] ?></div>
-    <?php endif ?>
+    <form class="admin-form" action="" method="POST" enctype="multipart/form-data" id="userUpdateForm">
+        <div class="admin-form__upload" id="uploadArea">
+            <input type="file" name="img" id="imgInput" class="admin-form__upload-input" accept="image/*">
+            <div class="admin-form__upload-placeholder" id="uploadPlaceholder" style="<?= $hasImage ? 'display:none;' : '' ?>">
+                <svg class="admin-form__upload-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span class="admin-form__upload-text">Нажмите, чтобы выбрать фото</span>
+            </div>
+            <img class="admin-form__upload-preview <?= $hasImage ? 'is-visible' : '' ?>" id="uploadPreview" src="<?= htmlspecialchars($old_input["img"] ?? "") ?>" alt="Preview">
+            <button type="button" class="admin-form__upload-remove <?= $hasImage ? 'is-visible' : '' ?>" id="uploadRemove">
+                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        <input type="hidden" id="remove_img" name="remove_img" value="<?= $hasImage ? '0' : '1' ?>">
+        <?php if (isset($input_error["img"])): ?>
+            <div class="admin-form__error"><?= $input_error["img"] ?></div>
+        <?php endif ?>
 
-    <input type="text" name="email" value="<?= htmlspecialchars($old_input["email"] ?? "") ?>">
-    <?php if (isset($input_error["email"])): ?>
-        <div style="color: red;"><?= $input_error["email"] ?></div>
-    <?php endif ?>
+        <input type="text" name="name" class="admin-form__input <?= isset($input_error['name']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["name"] ?? "") ?>" placeholder="Имя">
+        <?php if (isset($input_error["name"])): ?>
+            <div class="admin-form__error"><?= $input_error["name"] ?></div>
+        <?php endif ?>
 
-    <input id="phone" type="text" name="phone" value="<?= htmlspecialchars($old_input["phone"] ?? "") ?>">
-    <?php if (isset($input_error["phone"])): ?>
-        <div style="color: red;"><?= $input_error["phone"] ?></div>
-    <?php endif ?>
+        <input type="text" name="email" class="admin-form__input <?= isset($input_error['email']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["email"] ?? "") ?>" placeholder="Email">
+        <?php if (isset($input_error["email"])): ?>
+            <div class="admin-form__error"><?= $input_error["email"] ?></div>
+        <?php endif ?>
 
-    <select name="role" id="">
-        <option value="user" <?= $old_input["role"] == "user" ? "selected" : '' ?>>Пользователь</option>
-        <option value="manager" <?= $old_input["role"] == "manager" ? "selected" : '' ?>>Менеджер</option>
-        <option value="admin" <?= $old_input["role"] == "admin" ? "selected" : '' ?>>Админ</option>
-    </select>
-    <?php if (isset($input_error["rating"])): ?>
-        <div style="color: red;"><?= $input_error["rating"] ?></div>
-    <?php endif ?>
+        <select name="role" class="admin-form__select">
+            <option value="user" <?= $old_input["role"] == "user" ? "selected" : '' ?>>Пользователь</option>
+            <option value="manager" <?= $old_input["role"] == "manager" ? "selected" : '' ?>>Менеджер</option>
+            <option value="admin" <?= $old_input["role"] == "admin" ? "selected" : '' ?>>Админ</option>
+        </select>
 
-    <input type="password" name="password" placeholder="Новый пароль" autocomplete="new-password">
-    <button type="submit">Обновить</button>
-</form>
-<script src="https://unpkg.com/imask"></script>
+        <input type="password" name="password" class="admin-form__input" placeholder="Новый пароль" autocomplete="new-password">
+
+        <button type="submit" class="admin-form__submit">ОБНОВИТЬ</button>
+    </form>
+</div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const phoneInput = document.getElementById('phone');
-        if (phoneInput) {
-            IMask(phoneInput, {
-                mask: '+{7} (000) 000-00-00'
-            });
+    const imgInput = document.getElementById('imgInput');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const uploadRemove = document.getElementById('uploadRemove');
+    const removeImgInput = document.getElementById('remove_img');
+
+    imgInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadPreview.src = e.target.result;
+                uploadPreview.classList.add('is-visible');
+                uploadPlaceholder.style.display = 'none';
+                uploadRemove.classList.add('is-visible');
+                removeImgInput.value = 0;
+            }
+            reader.readAsDataURL(this.files[0]);
         }
     });
-</script>
-<script>
-    function previewImage(input) {
-        const remove_img = document.getElementById('remove_img');
-        const preview = document.getElementById('preview');
-        const clearBtn = document.getElementById('clear-btn');
 
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-                input.style.display = 'none';
-                clearBtn.style.display = 'block';
-                remove_img.value = 0;
-            }
-
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            preview.src = '';
-            preview.style.display = 'none';
-        }
-    }
-
-    function clearFile() {
-        const remove_img = document.getElementById('remove_img');
-        const input = document.getElementById('img');
-        const preview = document.getElementById('preview');
-        const clearBtn = document.getElementById('clear-btn');
-
-        input.value = ''; // сбрасываем поле
-        preview.src = ''; // убираем картинку
-        preview.style.display = 'none'; // прячем превью
-        input.style.display = 'block'; // прячем превью
-        clearBtn.style.display = 'none'; // прячем крестик
-        remove_img.value = 1;
-    }
+    uploadRemove.addEventListener('click', function(e) {
+        e.stopPropagation();
+        imgInput.value = '';
+        uploadPreview.src = '';
+        uploadPreview.classList.remove('is-visible');
+        uploadPlaceholder.style.display = 'flex';
+        uploadRemove.classList.remove('is-visible');
+        removeImgInput.value = 1;
+    });
 </script>

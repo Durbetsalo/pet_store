@@ -41,20 +41,29 @@ $old_input = $_SESSION["old_input"] ?? [];
 unset($_SESSION["error"]);
 unset($_SESSION["old_input"]);
 ?>
-<a href="/admin/<?= $table ?>">Назад</a>
-<form action="" method="POST" enctype="multipart/form-data">
-    <input type="text" name="title" value="<?= htmlspecialchars($old_input["title"] ?? "") ?>">
-    <?php
-    if (isset($input_error["title"])):
-    ?>
-        <div style="color: red;"><?= $input_error["title"] ?></div>
-    <?php endif ?>
 
-    <input type="text" name="description" value="<?= htmlspecialchars($old_input["description"] ?? "") ?>">
-    <?php
-    if (isset($input_error["description"])):
-    ?>
-        <div style="color: red;"><?= $input_error["description"] ?></div>
-    <?php endif ?>
-    <button type="submit">Создать</button>
-</form>
+<div class="admin-action">
+    <div class="admin-action__header">
+        <a href="/admin/<?= $table ?>" class="admin-action__back">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Назад
+        </a>
+        <h1 class="admin-action__title">Добавить акцию</h1>
+    </div>
+
+    <form class="admin-form" action="" method="POST">
+        <input type="text" name="title" class="admin-form__input <?= isset($input_error['title']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["title"] ?? "") ?>" placeholder="Название">
+        <?php if (isset($input_error["title"])): ?>
+            <div class="admin-form__error"><?= $input_error["title"] ?></div>
+        <?php endif ?>
+
+        <textarea name="description" class="admin-form__textarea <?= isset($input_error['description']) ? 'admin-form__textarea--error' : '' ?>" placeholder="Описание"><?= htmlspecialchars($old_input["description"] ?? "") ?></textarea>
+        <?php if (isset($input_error["description"])): ?>
+            <div class="admin-form__error"><?= $input_error["description"] ?></div>
+        <?php endif ?>
+
+        <button type="submit" class="admin-form__submit">СОЗДАТЬ</button>
+    </form>
+</div>

@@ -39,12 +39,25 @@ $old_input = $_SESSION["old_input"] ?? $result;
 unset($_SESSION["error"]);
 unset($_SESSION["old_input"]);
 ?>
-<a href="/admin/<?= $table ?>">Назад</a>
-<form action="" method="POST" enctype="multipart/form-data">
-    <select name="status_id" id="">
-        <?php foreach ($order_statuses as $order_status): ?>
-            <option value="<?= htmlspecialchars($order_status["id"]) ?>" <?= $result["status_id"] == $order_status["id"] ? "selected" : "" ?>><?= htmlspecialchars($order_status["name"]) ?></option>
-        <?php endforeach ?>
-    </select>
-    <button type="submit">Обновить</button>
-</form>
+
+<div class="admin-action">
+    <div class="admin-action__header">
+        <a href="/admin/<?= $table ?>" class="admin-action__back">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Назад
+        </a>
+        <h1 class="admin-action__title">Обновить заказ</h1>
+    </div>
+
+    <form class="admin-form" action="" method="POST">
+        <select name="status_id" class="admin-form__select">
+            <?php foreach ($order_statuses as $order_status): ?>
+                <option value="<?= htmlspecialchars($order_status["id"]) ?>" <?= $result["status_id"] == $order_status["id"] ? "selected" : "" ?>><?= htmlspecialchars($order_status["name"]) ?></option>
+            <?php endforeach ?>
+        </select>
+
+        <button type="submit" class="admin-form__submit">ОБНОВИТЬ</button>
+    </form>
+</div>

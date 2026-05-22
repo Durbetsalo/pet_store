@@ -5,35 +5,40 @@ $tableSQL = str_replace("-", "_", $table);
 $stmt = $connect->prepare("SELECT r.id, u.name AS user_name, p.name AS product_name, r.comment, r.created_at, r.assessment FROM $tableSQL r JOIN users u ON r.user_id = u.id JOIN products p ON r.product_id = p.id");
 $stmt->execute();
 $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-?>  
-<?php
-if (empty($rows)):
 ?>
-<p>Пока ничего нет.</p>
-<? else: ?>
-    <table style="border-collapse: collapse;">
-        <tr>
-            <th style="text-align: center; border: 1px solid red;">ID</th>
-            <th style="text-align: center; border: 1px solid red;">Пользователь</th>
-            <th style="text-align: center; border: 1px solid red;">Товар</th>
-            <th style="text-align: center; border: 1px solid red;">Коммент</th>
-            <th style="text-align: center; border: 1px solid red;">Дата Создания</th>
-            <th style="text-align: center; border: 1px solid red;">Рейтинг</th>
-            <th style="text-align: center; border: 1px solid red;" colspan="2">Действия</th>
-        </tr>
-        <?php
-        foreach ($rows as $row):
-        ?>
-            <tr>
-                <?php
-                foreach ($row as $value):
-                ?>
-                    <td style="text-align: center; border: 1px solid red;"><?= htmlspecialchars($value) ?></td>
-                <?php endforeach ?>
-                <td style="text-align: center; border: 1px solid red; "><a href="<?= $table ?>/update/<?= $row['id'] ?>">Обновить</a></td>
-                <td style="text-align: center; border: 1px solid red; "><a href="<?= $table ?>/delete/<?= $row['id'] ?>">Удалить</a></td>
-            </tr>
-        <?php endforeach ?>
-    </table>
-<?php endif ?>
+
+<?php if (empty($rows)): ?>
+    <p class="admin-empty">Пока ничего нет.</p>
+<?php else: ?>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Пользователь</th>
+                    <th>Товар</th>
+                    <th>Комментарий</th>
+                    <th>Дата создания</th>
+                    <th>Рейтинг</th>
+                    <th class="admin-table__actions-header">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rows as $row): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row["id"]) ?></td>
+                        <td><?= htmlspecialchars($row["user_name"]) ?></td>
+                        <td><?= htmlspecialchars($row["product_name"]) ?></td>
+                        <td><?= htmlspecialchars($row["comment"]) ?></td>
+                        <td><?= htmlspecialchars($row["created_at"]) ?></td>
+                        <td><?= htmlspecialchars($row["assessment"]) ?></td>
+                        <td class="admin-table__actions">
+                            <a href="<?= $table ?>/update/<?= $row['id'] ?>" class="btn-admin btn-admin--update">ОБНОВИТЬ</a>
+                            <a href="<?= $table ?>/delete/<?= $row['id'] ?>" class="btn-admin btn-admin--delete">УДАЛИТЬ</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>

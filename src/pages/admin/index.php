@@ -4,6 +4,7 @@ if (!isset($_SESSION["user_id"])) {
     header('Location: /login');
     exit;
 }
+
 $stmt = $connect->prepare("SELECT role FROM users WHERE id=?");
 $stmt->bind_param("i", $_SESSION["user_id"]);
 $stmt->execute();
@@ -11,12 +12,12 @@ $user = $stmt->get_result()->fetch_assoc();
 
 if (!$user) {
     session_destroy();
-    header('Location: /index.php');
+    header('Location: /register');
     exit;
 }
 if (!in_array($user["role"], ['admin', 'manager'])) {
     $_SESSION["user_role"] = "user";
-    header('Location: /index.php');
+    header('Location: /access-denied');
     exit;
 }
 $_SESSION["user_role"] = $user["role"];
@@ -90,7 +91,6 @@ $routes = [
     ],
     "orders" => [
         "list" => "/orders/list.php",
-        // "create" => "/orders/create.php",
         "update" => "/orders/update.php",
         "delete" => "/delete.php"
     ],
@@ -102,13 +102,11 @@ $routes = [
     ],
     "reviews" => [
         "list" => "/reviews/list.php",
-        // "create" => "/reviews/create.php",
         "update" => "/reviews/update.php",
         "delete" => "/delete.php"
     ],
     "users" => [
         "list" => "/users/list.php",
-        // "create" => "/users/create.php",
         "update" => "/users/update.php",
         "delete" => "/delete.php"
     ],
@@ -130,41 +128,33 @@ if ($proverka1 || $proverka2 || $proverka3 || $trash) {
     exit;
 }
 
-// if () {
-//     header('Location: /not-found');
-//     exit;
-// }
-
-// if () {
-//     header('Location: /not-found');
-//     exit;
-// }
-
 
 ?>
 <?php if (!in_array($action, ["update", 'create'])): ?>
-    <h1>Админ-панель</h1>
-    <ul>
-        <?php
-        if($user_role == "admin"):
-        ?>
-        <li><a href="/admin/products">Товары</a></li>
-        <li><a href="/admin/categories">Категории</a></li>
-        <li><a href="/admin/brands">Бренды</a></li>
-        <li><a href="/admin/order-statuses">Статусы заказов</a></li>
-        <li><a href="/admin/promotions">Акции</a></li>
-        <li><a href="/admin/users">Пользователи</a></li>
-        <?php endif?>
-        <li><a href="/admin/orders">Заказы</a></li>
-        <li><a href="/admin/reviews">Отзывы</a></li>
-    </ul>
-<?php endif ?>
-<?php
+<main class="admin-page">
+    <div class="container">
+        <h1 class="admin-page__title">Админ-панель</h1>
 
+        <nav class="admin-tabs">
+            <?php if ($user_role == "admin"): ?>
+                <a href="/admin/products" class="admin-tab <?= $page === 'products' ? 'active' : '' ?>">ТОВАРЫ</a>
+                <a href="/admin/categories" class="admin-tab <?= $page === 'categories' ? 'active' : '' ?>">КАТЕГОРИИ</a>
+                <a href="/admin/brands" class="admin-tab <?= $page === 'brands' ? 'active' : '' ?>">БРЕНДЫ</a>
+                <a href="/admin/order-statuses" class="admin-tab <?= $page === 'order-statuses' ? 'active' : '' ?>">СТАТУСЫ ЗАКАЗОВ</a>
+                <a href="/admin/promotions" class="admin-tab <?= $page === 'promotions' ? 'active' : '' ?>">АКЦИИ</a>
+                <a href="/admin/users" class="admin-tab <?= $page === 'users' ? 'active' : '' ?>">ПОЛЬЗОВАТЕЛИ</a>
+            <?php endif; ?>
+            <a href="/admin/orders" class="admin-tab <?= $page === 'orders' ? 'active' : '' ?>">ЗАКАЗЫ</a>
+            <a href="/admin/reviews" class="admin-tab <?= $page === 'reviews' ? 'active' : '' ?>">ОТЗЫВЫ</a>
+        </nav>
+<?php endif ?>
+
+<?php
 if ($file):
     require_once __DIR__ . $file;
-else :
+elseif (!in_array($action, ["update", 'create'])):
 ?>
-    <h1>Админ-панель Bloop</h1>
-    <p>Добро пожаловать! Выберите раздел.</p>
+        <p class="admin-empty">Добро пожаловать! Выберите раздел.</p>
+    </div>
+</main>
 <?php endif ?>
