@@ -6,6 +6,9 @@ session_start();
 include_once __DIR__ . "/../src/config/config.php";
 include_once __DIR__ . "/../src/config/database.php";
 
+// if (!$connect->ping()) {
+//     require_once __DIR__ . "/../config/database.php";
+// }
 
 //получение url ()
 $url = trim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), "/");

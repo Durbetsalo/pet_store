@@ -108,7 +108,7 @@ if (isset($_SESSION['user_id'])) {
                                 <h3 class="product-card__title"><a href="/product/<?= $product['id'] ?>"><?= htmlspecialchars($product['name']) ?></a></h3>
                                 <div class="product-card__bottom">
                                     <div class="">
-                                        <span class="product-card__price"><?= floor($product['price'] * (1 - $product['discount_percent'] / 100)) ?> ₽</span>
+                                        <span class="product-card__price"><?= floor(round($product['price'] * (1 - $product['discount_percent'] / 100))) ?> ₽</span>
                                         <?php if ($product['discount_percent']):  ?>
                                             <span class="product-card__price-old"><?= $product['price'] ?> ₽</span>
                                         <?php endif  ?>

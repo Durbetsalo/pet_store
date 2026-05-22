@@ -53,7 +53,7 @@ $delivery_cost = 500;
                         <div class="cart-item" id="cart_item_<?= $cart_item["product_id"] ?>" data-product-id="<?= $cart_item["product_id"] ?>" data-price="<?= $discount_price ?>" data-old-price="<?= $cart_item["product_price"] ?>" data-qty="<?= $cart_item["quantity"] ?>">
                             <div class="cart-item__image">
                                 <label class="cart-item__checkbox-wrapper">
-                                    <input type="checkbox" class="cart-item__checkbox" data-product-id="<?= $cart_item["product_id"] ?>" checked>
+                                    <input type="checkbox" class="cart-item__checkbox checkbox" data-product-id="<?= $cart_item["product_id"] ?>" checked>
                                     <span class="cart-item__checkbox"></span>
                                 </label>
                                 <img src="<?= htmlspecialchars($cart_item["product_img"]) ?>" alt="<?= htmlspecialchars($cart_item["product_name"]) ?>">
@@ -148,7 +148,18 @@ $delivery_cost = 500;
         });
     }
 
-    itemCheckboxes.forEach(cb => cb.addEventListener('change', updateCartTotals));
+    itemCheckboxes.forEach(cb => cb.addEventListener('change', () => {
+        updateCartTotals()
+        
+        selected_id = Array.from(document.querySelectorAll(".checkbox")).filter(elem => !elem.checked).map(elem => elem.getAttribute("data-product-id"))
+        
+        // console.log(selected_id);
+        if(selected_id.length == 0){
+            selectAll.checked = true
+        }else{
+            selectAll.checked = false
+        }
+    }));
 
     function getSelectedItems() {
         return Array.from(document.querySelectorAll('.cart-item')).filter(item => {
@@ -162,8 +173,8 @@ $delivery_cost = 500;
     }
 
     function updateCartTotals() {
-        const allChecked = itemCheckboxes.every(cb => cb.checked);
-        if (selectAll) selectAll.checked = allChecked;
+        // const allChecked = itemCheckboxes.every(cb => cb.checked);
+        // if (selectAll) selectAll.checked = allChecked;
 
         const selected = getSelectedItems();
         let totalQty = 0;

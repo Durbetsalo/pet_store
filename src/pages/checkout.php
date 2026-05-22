@@ -32,11 +32,14 @@ $cart_items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 $total_amount = 0;
 foreach ($cart_items as $cart_item) {
-    $total_amount += $cart_item["product_price"] * $cart_item["quantity"] * (1 - $cart_item["product_discount_percent"] / 100);
+    $total_amount += floor(round($cart_item["product_price"] * $cart_item["quantity"] * (1 - $cart_item["product_discount_percent"] / 100)));
 }
+$total_amount += 500;
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $address = $_POST['address'];
+    
 
     $error = [];
     if (empty($address)) {
@@ -54,7 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: /checkout?selected={$_GET['selected']}");
         exit;
     }
-
+    // echo($total_amount);
+    // exit;
     $stmt = $connect->prepare("INSERT INTO orders (user_id, status_id, address, total_amount) VALUES (?,1,?,?)");
     $stmt->bind_param('isi', $_SESSION["user_id"], $address, $total_amount);
     $stmt->execute();
@@ -63,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($cart_items as $cart_item) {
         $price_at_order = $cart_item["product_price"];
         $discount_percent_at_order = $cart_item["product_discount_percent"];
-        $discount_price_at_order = $cart_item["product_price"] * (1 - $cart_item["product_discount_percent"] / 100);
+        $discount_price_at_order = floor(round($cart_item["product_price"] * (1 - $cart_item["product_discount_percent"] / 100)));
 
         $stmt = $connect->prepare("INSERT INTO order_items (
         order_id, 

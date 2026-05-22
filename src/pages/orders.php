@@ -50,7 +50,7 @@ $title = "Мои заказы";
                             <span class="badge badge--tag" style="color: var(--color-primary);"><?= $order['status'] ?></span>
                         </div>
 
-                        <a href="/product/<?= $product['id'] ?>" class="order-card__items">
+                        <div class="order-card__items">
                             <?php foreach ($products as $product): ?>
                                 <div class="order-card__item">
                                     <div class="order-card__item-image">
@@ -70,7 +70,7 @@ $title = "Мои заказы";
                                     </div>
                                 </div>
                             <?php endforeach; ?>
-                        </a>
+                        </div>
 
                         <div class="order-card__footer">
                             <span class="order-card__total-label">Итого</span>
