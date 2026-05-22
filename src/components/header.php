@@ -1,4 +1,10 @@
 <?php
+
+if (!$connect->ping()) {
+    require_once __DIR__ . "/../src/config/database.php";
+}
+
+
 if (isset($_SESSION["user_id"])) {
     $stmt = $connect->prepare("SELECT quantity FROM cart_items WHERE user_id=?");
     $stmt->bind_param("i", $_SESSION["user_id"]);
