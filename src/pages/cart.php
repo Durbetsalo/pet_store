@@ -19,164 +19,286 @@ $stmt->bind_param("i", $_SESSION["user_id"]);
 $stmt->execute();
 $cart_items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+$total_items = 0;
 $total_amount = 0;
 
 foreach ($cart_items as $cart_item) {
-    $total_amount += $cart_item["product_price"] * $cart_item["quantity"] * (1 - $cart_item["product_discount_percent"] / 100);
+    $total_items += $cart_item["quantity"];
+    $discount_price = $cart_item["product_price"] * (1 - $cart_item["product_discount_percent"] / 100);
+    $total_amount += $discount_price * $cart_item["quantity"];
 }
 
+$delivery_cost = 500;
 ?>
-<div>
-    <?php if (!empty($cart_items)): ?>
-        <div class="cart_container">
-            <input type="checkbox" name="" id="main_checkbox" checked>
-            <label for="main_checkbox">Все</label>
-            <?php foreach ($cart_items as $cart_item): ?>
-                <div id="card_product_<?= $cart_item["product_id"] ?>">
-                    <input data-product-id="<?= $cart_item["product_id"] ?>" class="product_checkbox" type="checkbox" onclick="toggleProductCheckbox(this)" name="" data-id="" checked>
-                    <img style="height: 50px;" src="<?= $cart_item["product_img"] ?>" alt="">
-                    <p><?= $cart_item["product_name"] ?></p>
-    
-                    <?php if (empty($cart_item["product_discount_percent"])): ?>
-                        <p><span id="product_sum_<?= $cart_item["product_id"] ?>"><?= $cart_item["product_price"] * $cart_item["quantity"] ?></span> ₽</p>
-                    <?php else: ?>
-                        <div><span id="product_sum_<?= $cart_item["product_id"] ?>"><?= $cart_item["product_price"] * $cart_item["quantity"] * (1 - $cart_item["product_discount_percent"] / 100) ?></span> ₽</div>
-                        <div>Скидка <span ><?= $cart_item["product_discount_percent"] ?></span> %</div>
-                        <div><s id="product_sum_old_<?= $cart_item["product_id"] ?>"><?= $cart_item["product_price"] * $cart_item["quantity"] ?></s> ₽</div>
-                    <?php endif ?>
-                    <div>
-                        <button data-product-id="<?= $cart_item["product_id"] ?>" onclick="increaseCartItem(this)">+</button>
-                        <div><span id="in_cart_<?= $cart_item["product_id"] ?>"><?= $cart_item["quantity"] ?></span> шт.</div>
-                        <button data-product-id="<?= $cart_item["product_id"] ?>" onclick="decreaseCartItem(this)">-</button>
-                    </div>
-                    <hr>
-                </div>
-            <?php endforeach ?>
-            <div>
-                <p>Итого: <span id="total_amount"><?= $total_amount ?></span> ₽</p>
-                <a id="checkout_button" onclick="goToCheckout()" style="cursor: pointer;">Перейти к оформлению</a>
-                <div id="checkout_empty_message" style="display: none;">Выберите товары, чтобы перейти к оформлению</div>
+
+<main class="cart-page">
+    <div class="container">
+        <?php if (!empty($cart_items)): ?>
+            <div class="cart-page__header">
+                <h1 class="cart-page__title">Корзина <span class="cart-page__count"><?= $total_items ?> товаров</span></h1>
+                <label class="cart-page__select-all">
+                    <input type="checkbox" id="selectAll" checked>
+                    <span class="cart-page__checkbox"></span>
+                    Все
+                </label>
             </div>
+
+            <div class="cart-page__layout">
+                <div class="cart-page__items">
+                    <?php foreach ($cart_items as $cart_item):
+                        $discount_price = $cart_item["product_price"] * (1 - $cart_item["product_discount_percent"] / 100);
+                        $item_total = $discount_price * $cart_item["quantity"];
+                        $old_total = $cart_item["product_price"] * $cart_item["quantity"];
+                    ?>
+                        <div class="cart-item" id="cart_item_<?= $cart_item["product_id"] ?>" data-product-id="<?= $cart_item["product_id"] ?>" data-price="<?= $discount_price ?>" data-old-price="<?= $cart_item["product_price"] ?>" data-qty="<?= $cart_item["quantity"] ?>">
+                            <div class="cart-item__image">
+                                <label class="cart-item__checkbox-wrapper">
+                                    <input type="checkbox" class="cart-item__checkbox" data-product-id="<?= $cart_item["product_id"] ?>" checked>
+                                    <span class="cart-item__checkbox"></span>
+                                </label>
+                                <img src="<?= htmlspecialchars($cart_item["product_img"]) ?>" alt="<?= htmlspecialchars($cart_item["product_name"]) ?>">
+                            </div>
+                            <div class="cart-item__info">
+                                <div class="cart-item__info-wrapper">
+                                    <h3 class="cart-item__name"><?= htmlspecialchars($cart_item["product_name"]) ?></h3>
+                                    <div class="cart-item__badges">
+                                        <?php if ($cart_item["product_is_popular"]): ?>
+                                            <span class="badge badge--tag">ХИТ</span>
+                                        <?php endif; ?>
+                                        <?php if ($cart_item["product_is_new"]): ?>
+                                            <span class="badge badge--tag">НОВИНКА</span>
+                                        <?php endif; ?>
+                                        <?php if ($cart_item["product_discount_percent"] > 0): ?>
+                                            <span class="badge badge--sale">СКИДКА <?= $cart_item["product_discount_percent"] ?>%</span>
+                                        <?php endif; ?>
+                                        <?php if ($cart_item["product_stock"] <= 5): ?>
+                                            <span class="cart-item__stock"><img src="/public/assets/icons/thunder-icon.svg" alt=""> Осталось <?= $cart_item["product_stock"] ?> шт.</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="cart-item__price-row">
+                                    <span class="cart-item__price" data-product-id="<?= $cart_item["product_id"] ?>"><?= number_format($item_total, 0, '', ' ') ?> ₽</span>
+                                    <?php if ($cart_item["product_discount_percent"] > 0): ?>
+                                        <span class="cart-item__price-old" data-product-id="<?= $cart_item["product_id"] ?>"><?= number_format($old_total, 0, '', ' ') ?> ₽</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="cart-item__actions">
+                                <div class="cart-item__qty">
+                                    <button class="cart-item__qty-btn" data-product-id="<?= $cart_item["product_id"] ?>" onclick="decreaseCartItem(this)">−</button>
+                                    <span class="cart-item__qty-value" id="qty_<?= $cart_item["product_id"] ?>"><?= $cart_item["quantity"] ?></span>
+                                    <button class="cart-item__qty-btn" data-product-id="<?= $cart_item["product_id"] ?>" onclick="increaseCartItem(this)">+</button>
+                                </div>
+                                <button class="cart-item__delete" data-product-id="<?= $cart_item["product_id"] ?>" onclick="removeCartItem(this)">
+                                    <img src="/public/assets/icons/delete-icon.svg" alt="">
+                                </button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="cart-page__summary" id="cartSummary">
+                    <h3 class="cart-page__summary-title">Общая сумма</h3>
+                    <div class="cart-page__summary-row">
+                        <span>Товары, <span id="summaryItemCount"><?= $total_items ?></span> шт.</span>
+                        <span id="summaryItemsTotal"><?= number_format($total_amount, 0, '', ' ') ?> ₽</span>
+                    </div>
+                    <div class="cart-page__summary-row">
+                        <span>Доставка</span>
+                        <span><?= number_format($delivery_cost, 0, '', ' ') ?> ₽</span>
+                    </div>
+                    <div class="cart-page__summary-total">
+                        <span>Итого:</span>
+                        <span id="summaryTotal"><?= number_format($total_amount + $delivery_cost, 0, '', ' ') ?> ₽</span>
+                    </div>
+                    <a class="btn btn--primary btn--full cart-page__checkout-btn" id="checkoutBtn" onclick="goToCheckout()">Перейти к оформлению</a>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="cart-page__empty">
+                <h1 class="cart-page__title">Корзина</h1>
+                <p>Ваша корзина пуста</p>
+                <a href="/catalog" class="btn btn--primary">Перейти в каталог</a>
+            </div>
+        <?php endif; ?>
+    </div>
+</main>
+
+<?php if (!empty($cart_items)): ?>
+    <!-- <div class="cart-page__sticky-bar" id="stickyBar">
+    <div class="container cart-page__sticky-inner">
+        <div class="cart-page__sticky-info">
+            <span class="cart-page__sticky-count"><span id="stickyItemCount"><?= $total_items ?></span> товаров</span>
+            <span class="cart-page__sticky-total" id="stickyTotal"><?= number_format($total_amount + $delivery_cost, 0, '', ' ') ?> ₽</span>
         </div>
-        <div style="display: none;" class="empty_cart">Корзина пуста</div>
-    <?php else: ?>
-        <div>Корзина пуста</div>
-    <?php endif ?>
-</div>
+        <a href="/checkout" class="btn btn--primary btn--sm cart-page__sticky-btn">Перейти к оформлению</a>
+    </div>
+</div> -->
+<?php endif; ?>
 
 <script>
-    const main_checkbox = document.getElementById('main_checkbox');
-    const product_checkbox = Array.from(document.querySelectorAll('.product_checkbox'));
-    const total_amount = document.getElementById('total_amount')
-    const checkout_empty_message = document.getElementById('checkout_empty_message')
-    const checkout_button = document.getElementById('checkout_button')
-    const value = +total_amount.textContent
+    const selectAll = document.getElementById('selectAll');
+    const itemCheckboxes = Array.from(document.querySelectorAll('.cart-item__checkbox'));
+    const stickyBar = document.getElementById('stickyBar');
+    const cartSummary = document.getElementById('cartSummary');
 
-    window.addEventListener('pageshow', () => {
-        main_checkbox.checked = true;
-        product_checkbox.forEach(elem => {
-            elem.checked = true;
+    if (cartSummary && stickyBar) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                stickyBar.style.transform = entry.isIntersecting ? 'translateY(100%)' : 'translateY(0)';
+            });
+        }, {
+            threshold: 0.3
         });
-    })
-
-
-    let selected_id = product_checkbox.map(elem => elem.getAttribute("data-product-id"))
-
-
-    main_checkbox.addEventListener('change', function() {
-        selected_id = main_checkbox.checked ? product_checkbox.map(elem => elem.getAttribute("data-product-id")) : []
-        product_checkbox.forEach(elem => {
-            elem.checked = main_checkbox.checked;
-        });
-        if (main_checkbox.checked) {
-            checkout_button.style.display = 'block'
-            checkout_empty_message.style.display = 'none'
-            animateValue(total_amount, total_amount.textContent, value, 400);
-        } else {
-            checkout_button.style.display = 'none'
-            checkout_empty_message.style.display = 'block'
-            animateValue(total_amount, total_amount.textContent, 0, 400);
-        }
-    });
-
-    function toggleProductCheckbox(checkbox) {
-        selected_id = Array.from(document.querySelectorAll('.product_checkbox')).filter(elem => elem.checked == true).map(elem => elem.getAttribute("data-product-id"));
-
-        main_checkbox.checked = false
-        if (product_checkbox.filter((elem) => elem.checked === false).length == 0) {
-            main_checkbox.checked = true
-        }
-
-        if (selected_id.length == 0) {
-            checkout_button.style.display = 'none'
-            checkout_empty_message.style.display = 'block'
-        }
-
-        let end_value
-        if (checkbox.checked) {
-            checkout_button.style.display = 'block'
-            checkout_empty_message.style.display = 'none'
-            end_value = +total_amount.textContent + +document.querySelector("#product_sum_" + checkbox.getAttribute("data-product-id")).textContent
-        } else {
-            end_value = total_amount.textContent - document.querySelector("#product_sum_" + checkbox.getAttribute("data-product-id")).textContent
-        }
-
-        animateValue(total_amount, total_amount.textContent, end_value, 400);
+        observer.observe(cartSummary);
     }
 
-    function goToCheckout() {
-        window.location.href = `/checkout?selected=${selected_id}`;
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            itemCheckboxes.forEach(cb => cb.checked = this.checked);
+            updateCartTotals();
+        });
+    }
+
+    itemCheckboxes.forEach(cb => cb.addEventListener('change', updateCartTotals));
+
+    function getSelectedItems() {
+        return Array.from(document.querySelectorAll('.cart-item')).filter(item => {
+            const cb = item.querySelector('.cart-item__checkbox');
+            return cb && cb.checked;
+        });
+    }
+
+    function formatPrice(num) {
+        return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    }
+
+    // function formatPrice(num) {
+    //     return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    // }
+
+    function updateCartTotals() {
+        const allChecked = itemCheckboxes.every(cb => cb.checked);
+        if (selectAll) selectAll.checked = allChecked;
+
+        const selected = getSelectedItems();
+        let totalQty = 0;
+        let totalAmount = 0;
+
+        selected.forEach(item => {
+            const qty = parseInt(item.dataset.qty) || 0;
+            const price = parseFloat(item.dataset.price) || 0;
+            totalQty += qty;
+            totalAmount += price * qty;
+        });
+
+        const grandTotal = totalAmount + <?= $delivery_cost ?>;
+
+        const summaryItemCount = document.getElementById('summaryItemCount');
+        const summaryItemsTotal = document.getElementById('summaryItemsTotal');
+        const summaryTotal = document.getElementById('summaryTotal');
+        const stickyItemCount = document.getElementById('stickyItemCount');
+        const stickyTotal = document.getElementById('stickyTotal');
+
+        if (summaryItemCount) animateValue(summaryItemCount, summaryItemCount.textContent, totalQty, 400);
+        if (summaryItemsTotal) animateValue(summaryItemsTotal, summaryItemsTotal.textContent, Math.round(totalAmount), 400, formatPrice);
+        if (summaryTotal) animateValue(summaryTotal, summaryTotal.textContent, Math.round(grandTotal), 400, formatPrice);
+        if (stickyItemCount) animateValue(stickyItemCount, stickyItemCount.textContent, totalQty, 400);
+        if (stickyTotal) animateValue(stickyTotal, stickyTotal.textContent, Math.round(grandTotal), 400, formatPrice);
+    }
+
+    function numberFormat(num) {
+        return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     }
 
     async function increaseCartItem(button) {
-        let data = await addToCart(button, true)
-        if (!data.success) {
-            return
-        }
+        let data = await addToCart(button, true);
+        if (!data.success) return;
 
-        const total_amount = document.getElementById('total_amount')
-        const product_sum = document.getElementById('product_sum_' + button.getAttribute("data-product-id"))
-        const checkbox = document.querySelector(`[data-product-id="${button.getAttribute('data-product-id')}"]`)
-        const product_sum_old = document.getElementById('product_sum_old_' + button.getAttribute("data-product-id"))
-        
+        const productId = button.getAttribute("data-product-id");
+        const item = document.getElementById('cart_item_' + productId);
+        const qtyEl = document.getElementById('qty_' + productId);
+        const newQty = parseInt(qtyEl.textContent) + 1;
+        animateValue(qtyEl, parseInt(qtyEl.textContent), newQty, 400);
+        item.dataset.qty = newQty;
 
-        if (product_sum_old) {
-            animateValue(product_sum_old, product_sum_old.textContent, +product_sum_old.textContent + data.old_price, 400);
+        const price = parseFloat(item.dataset.price);
+        const oldPrice = parseFloat(item.dataset.oldPrice);
+        const newTotal = price * newQty;
+        const newOldTotal = oldPrice * newQty;
+
+        const priceEl = item.querySelector('.cart-item__price');
+        if (priceEl) animateValue(priceEl, priceEl.textContent, Math.round(newTotal), 400, formatPrice);
+
+        const oldPriceEl = item.querySelector('.cart-item__price-old');
+        if (oldPriceEl) animateValue(oldPriceEl, oldPriceEl.textContent, Math.round(newOldTotal), 400, formatPrice);
+
+        updateCartTotals();
+    }
+
+    async function decreaseCartItem(button) {
+        let data = await deleteFromCart(button, true);
+        if (!data.success) return;
+
+        const productId = button.getAttribute("data-product-id");
+
+        if (data.status == "deleted") {
+            const card = document.getElementById('cart_item_' + productId);
+            card.remove();
+            const remaining = document.querySelectorAll('.cart-item');
+            if (remaining.length === 0) {
+                location.reload();
+            }
+        } else {
+            const item = document.getElementById('cart_item_' + productId);
+            const qtyEl = document.getElementById('qty_' + productId);
+            const newQty = parseInt(qtyEl.textContent) - 1;
+            animateValue(qtyEl, parseInt(qtyEl.textContent), newQty, 400);
+            item.dataset.qty = newQty;
+
+            const price = parseFloat(item.dataset.price);
+            const oldPrice = parseFloat(item.dataset.oldPrice);
+            const newTotal = price * newQty;
+            const newOldTotal = oldPrice * newQty;
+
+            const priceEl = item.querySelector('.cart-item__price');
+            if (priceEl) animateValue(priceEl, priceEl.textContent, Math.round(newTotal), 400, formatPrice);
+
+            const oldPriceEl = item.querySelector('.cart-item__price-old');
+            if (oldPriceEl) animateValue(oldPriceEl, oldPriceEl.textContent, Math.round(newOldTotal), 400, formatPrice);
         }
-        animateValue(product_sum, product_sum.textContent, +product_sum.textContent + data.product_price, 400);
-        if (checkbox.checked) {
-            animateValue(total_amount, total_amount.textContent, +total_amount.textContent + data.product_price, 400);
+        updateCartTotals();
+    }
+
+    async function removeCartItem(button) {
+        const productId = button.getAttribute("data-product-id");
+        const card = document.getElementById('cart_item_' + productId);
+
+        let formdata = new FormData();
+        formdata.append("product_id", productId);
+
+        try {
+            let result = await fetch("/src/actions/product/delete-from-cart.php", {
+                method: "POST",
+                body: formdata,
+            });
+            let data = await result.json();
+
+            if (data.success) {
+                card.remove();
+                const remaining = document.querySelectorAll('.cart-item');
+                if (remaining.length === 0) {
+                    location.reload();
+                }
+                updateCartTotals();
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
-    async function decreaseCartItem(button) {
-        let data = await deleteFromCart(button, true)
-        console.log(data);
 
-        if (!data.success) {
-            return
-        }
-
-        const card = document.getElementById('card_product_' + button.getAttribute("data-product-id"))
-        const total_amount = document.getElementById('total_amount')
-        const product_sum = document.getElementById('product_sum_' + button.getAttribute("data-product-id"))
-        const checkbox = document.querySelector(`[data-product-id="${button.getAttribute('data-product-id')}"]`)
-        const product_sum_old = document.getElementById('product_sum_old_' + button.getAttribute("data-product-id"))
-
-        const empty_cart = document.querySelector('.empty_cart')
-        const cart_container = document.querySelector('.cart_container')
-        if (data.status == "deleted") {
-            card.remove()
-        }
-        if(data.count_cart_items == 0){
-            cart_container.style.display = 'none'
-            empty_cart.style.display = 'block'
-        }
-        if (product_sum_old) {
-            animateValue(product_sum_old, product_sum_old.textContent, +product_sum_old.textContent - data.old_price, 400);
-        }
-        animateValue(product_sum, product_sum.textContent, +product_sum.textContent - data.product_price, 400);
-        if (checkbox.checked) {
-            animateValue(total_amount, total_amount.textContent, +total_amount.textContent - data.product_price, 400);
-        }
+    function goToCheckout() {
+        selected_id = itemCheckboxes.filter(elem => elem.checked).map(elem => elem.getAttribute("data-product-id"));
+        window.location.href = `/checkout?selected=${selected_id}`
     }
 </script>

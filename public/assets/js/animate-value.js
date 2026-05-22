@@ -1,10 +1,9 @@
-function animateValue(element, start, end, duration = 400) {
+function animateValue(element, start, end, duration = 400, formatter = null) {
     if(element.animationId){
         cancelAnimationFrame(element.animationId)
     }
-    const current_text  = start;
-    const start_value = parseInt(current_text, 10); // 100
-    const end_value = end; //300
+    const startValue = typeof start === 'string' ? parseInt(start.replace(/[^\d-]/g, ''), 10) : start;
+    const endValue = typeof end === 'string' ? parseInt(end.replace(/[^\d-]/g, ''), 10) : end;
     let startTime = null;
 
     const animate = (currentTime) =>{
@@ -15,13 +14,13 @@ function animateValue(element, start, end, duration = 400) {
 
         const progress = Math.min((currentTime - startTime) / duration, 1)
         
-        const current_value = Math.floor(progress * (end_value - start_value) + start_value)
+        const currentValue = Math.floor(progress * (endValue - startValue) + startValue)
 
-        element.textContent = current_value
+        element.textContent = formatter ? formatter(currentValue) : currentValue
         if(progress != 1){
             requestAnimationFrame(animate)
         }else{
-            element.textContent = end_value
+            element.textContent = formatter ? formatter(endValue) : endValue
         }
     }
 

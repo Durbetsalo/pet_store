@@ -23,6 +23,11 @@ $cart_item = $stmt->get_result()->fetch_assoc();
 
 $quantity = $cart_item['quantity'] ?? 0;
 
+
+if(empty($cart_item)){
+    echo json_encode(["success" => false, "error" => "not_in_cart"]);
+    exit;
+}
 $response = [
     "success" => true,
     "product_price" => $cart_item["price"],

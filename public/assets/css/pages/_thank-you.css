@@ -1,0 +1,130 @@
+.thank-you-page {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+.thank-you-page__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 4rem;
+    max-width: 50%;
+}
+
+.thank-you-page__logo {
+    display: inline-block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.thank-you-page__inner {
+    max-width: 500px;
+    margin: auto;
+}
+
+.thank-you-page__title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+
+}
+
+.thank-you-page__text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-text);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.thank-you-page__order {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 0.65rem;
+}
+
+.thank-you-page__btn {
+    margin-bottom: 1.5rem;
+}
+
+.thank-you-page__image {
+    flex: 1;
+    max-width: 50%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.thank-you-page__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+    .thank-you-page__content {
+        padding: 2rem 3rem;
+    }
+
+    .thank-you-page__title {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .thank-you-page {
+        flex-direction: column;
+    }
+
+    .thank-you-page__image {
+        display: none;
+    }
+
+
+    .thank-you-page__content {
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+        min-height: auto;
+    }
+
+    .thank-you-page__logo {
+        margin-bottom: 2rem;
+    }
+
+    .thank-you-page__image {
+        max-width: 100%;
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .thank-you-page__content {
+        padding: 1.5rem 1rem;
+    }
+
+    .thank-you-page__logo {
+        font-size: 1.5rem;
+    }
+
+    .thank-you-page__title {
+        font-size: 2.3rem;
+    }
+
+    .thank-you-page__text {
+        font-size: 0.85rem;
+    }
+
+    .thank-you-page__image {
+        height: 200px;
+    }
+}
+
+@media (max-width: 325px) {
+    .thank-you-page__title {
+        font-size: 1.9rem;
+    }
+}

@@ -115,112 +115,140 @@ $old_input = $_SESSION["old_input"] ?? [];
 unset($_SESSION["error"]);
 unset($_SESSION["old_input"]);
 ?>
-<a href="/admin/<?= $table ?>">Назад</a>
-<form action="" method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; width:fit-content">
-    <img id="preview" src="" style="max-width: 200px; margin-top: 10px; display: none;">
-    <input id="img" type="file" name="img" value="<?= htmlspecialchars($old_input["img"] ?? "") ?>" accept="image/*" onchange="previewImage(this)">
-    <button type="button" onclick="clearFile()" style="display:none;" id="clear-btn">✕</button>
-    <?php
-    if (isset($input_error["img"])):
-    ?>
-        <div style="color: red;"><?= $input_error["img"] ?></div>
-    <?php endif ?>
 
-
-    <input type="text" name="name" value="<?= htmlspecialchars($old_input["name"] ?? "") ?>" placeholder="Название">
-    <?php if (isset($input_error["name"])): ?>
-        <div style="color: red;"><?= $input_error["name"] ?></div>
-    <?php endif ?>
-
-
-    <input type="text" name="description" value="<?= htmlspecialchars($old_input["description"] ?? "") ?>" placeholder="Описание">
-    <?php if (isset($input_error["description"])): ?>
-        <div style="color: red;"><?= $input_error["description"] ?></div>
-    <?php endif ?>
-
-
-    <input type="number" name="price" value="<?= htmlspecialchars($old_input["price"] ?? "") ?>" placeholder="Цена">
-    <?php if (isset($input_error["price"])): ?>
-        <div style="color: red;"><?= $input_error["price"] ?></div>
-    <?php endif ?>
-
-
-    <input type="number" name="stock" value="<?= htmlspecialchars($old_input["stock"] ?? "") ?>" placeholder="На складе">
-    <?php if (isset($input_error["stock"])): ?>
-        <div style="color: red;"><?= $input_error["stock"] ?></div>
-    <?php endif ?>
-
-
-    <input type="text" name="discount_percent" value="<?= htmlspecialchars($old_input["discount_percent"] ?? "") ?>" placeholder="Скидка">
-    <?php if (isset($input_error["discount_percent"])): ?>
-        <div style="color: red;"><?= $input_error["discount_percent"] ?></div>
-    <?php endif ?>
-
-
-    <input type="date" name="discount_end_date" value="<?= htmlspecialchars($old_input["discount_end_date"] ?? "") ?>" placeholder="Окончание скидки">
-    <?php if (isset($input_error["discount_end_date"])): ?>
-        <div style="color: red;"><?= $input_error["discount_end_date"] ?></div>
-    <?php endif ?>
-
-    <div>
-        <input id="is_new" type="checkbox" name="is_new" value="<?= htmlspecialchars($old_input["is_new"] ?? "") ?>" placeholder="Окончание скидки">
-        <label for="is_new">Новое</label>
-    </div>
-    <div>
-        <input id="is_popular" type="checkbox" name="is_popular" value="<?= htmlspecialchars($old_input["is_popular"] ?? "") ?>" placeholder="Окончание скидки">
-        <label for="is_popular">Популярное</label>
-    </div>
-    <div>
-        <input id="is_featured" type="checkbox" name="is_featured" value="<?= htmlspecialchars($old_input["is_featured"] ?? "") ?>" placeholder="Окончание скидки">
-        <label for="is_featured">Рекомендуемое</label>
+<div class="admin-action">
+    <div class="admin-action__header">
+        <a href="/admin/<?= $table ?>" class="admin-action__back">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Назад
+        </a>
+        <h1 class="admin-action__title">Добавить товар</h1>
     </div>
 
-    <select name="category_id" id="">
-        <?php foreach ($categories as $category): ?>
-            <option value="<?= $category['id'] ?>"><?= $category['name'] ?></option>
-        <?php endforeach ?>
-    </select>
+    <form class="admin-form" action="" method="POST" enctype="multipart/form-data" id="productForm">
+        <div class="admin-form__upload" id="uploadArea">
+            <input type="file" name="img" id="imgInput" class="admin-form__upload-input" accept="image/*">
+            <div class="admin-form__upload-placeholder" id="uploadPlaceholder">
+                <svg class="admin-form__upload-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span class="admin-form__upload-text">Нажмите, чтобы выбрать фото</span>
+            </div>
+            <img class="admin-form__upload-preview" id="uploadPreview" src="" alt="Preview">
+            <button type="button" class="admin-form__upload-remove" id="uploadRemove">
+                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        <?php if (isset($input_error["img"])): ?>
+            <div class="admin-form__error"><?= $input_error["img"] ?></div>
+        <?php endif ?>
 
-    <select name="brand_id" id="">
-        <?php foreach ($brands as $brand): ?>
-            <option value="<?= $brand['id'] ?>"><?= $brand['name'] ?></option>
-        <?php endforeach ?>
-    </select>
+        <input type="text" name="name" class="admin-form__input <?= isset($input_error['name']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["name"] ?? "") ?>" placeholder="Название">
+        <?php if (isset($input_error["name"])): ?>
+            <div class="admin-form__error"><?= $input_error["name"] ?></div>
+        <?php endif ?>
 
+        <textarea name="description" class="admin-form__textarea <?= isset($input_error['description']) ? 'admin-form__textarea--error' : '' ?>" placeholder="Описание"><?= htmlspecialchars($old_input["description"] ?? "") ?></textarea>
+        <?php if (isset($input_error["description"])): ?>
+            <div class="admin-form__error"><?= $input_error["description"] ?></div>
+        <?php endif ?>
 
-    <button>Создать</button>
-</form>
+        <label class="admin-form__label" for="price">Цена</label>
+        <input type="number" name="price" id="price" class="admin-form__input <?= isset($input_error['price']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["price"] ?? "") ?>" placeholder="50 000">
+        <?php if (isset($input_error["price"])): ?>
+            <div class="admin-form__error"><?= $input_error["price"] ?></div>
+        <?php endif ?>
+
+        <div class="admin-form__row">
+            <input type="number" name="stock" class="admin-form__input <?= isset($input_error['stock']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["stock"] ?? "") ?>" placeholder="Склад">
+            <?php if (isset($input_error["stock"])): ?>
+                <div class="admin-form__error"><?= $input_error["stock"] ?></div>
+            <?php endif ?>
+
+            <input type="number" name="discount_percent" class="admin-form__input <?= isset($input_error['discount_percent']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["discount_percent"] ?? "") ?>" placeholder="Процент скидки">
+            <?php if (isset($input_error["discount_percent"])): ?>
+                <div class="admin-form__error"><?= $input_error["discount_percent"] ?></div>
+            <?php endif ?>
+
+            <input type="date" name="discount_end_date" class="admin-form__input <?= isset($input_error['discount_end_date']) ? 'admin-form__input--error' : '' ?>" value="<?= htmlspecialchars($old_input["discount_end_date"] ?? "") ?>">
+            <?php if (isset($input_error["discount_end_date"])): ?>
+                <div class="admin-form__error"><?= $input_error["discount_end_date"] ?></div>
+            <?php endif ?>
+
+            <div class="admin-form__checkboxes">
+                <label class="admin-form__checkbox">
+                    <input type="checkbox" name="is_new" value="1" <?= isset($old_input["is_new"]) ? 'checked' : '' ?>>
+                    <span class="admin-form__checkbox-box"></span>
+                    Новое
+                </label>
+                <label class="admin-form__checkbox">
+                    <input type="checkbox" name="is_popular" value="1" <?= isset($old_input["is_popular"]) ? 'checked' : '' ?>>
+                    <span class="admin-form__checkbox-box"></span>
+                    Популярное
+                </label>
+                <label class="admin-form__checkbox">
+                    <input type="checkbox" name="is_featured" value="1" <?= isset($old_input["is_featured"]) ? 'checked' : '' ?>>
+                    <span class="admin-form__checkbox-box"></span>
+                    Рекомендуемое
+                </label>
+            </div>
+        </div>
+
+        <select name="category_id" class="admin-form__select">
+            <option value="" disabled selected>Категория</option>
+            <?php foreach ($categories as $category): ?>
+                <option value="<?= $category['id'] ?>" <?= ($old_input["category_id"] ?? '') == $category['id'] ? 'selected' : '' ?>><?= htmlspecialchars($category['name']) ?></option>
+            <?php endforeach ?>
+        </select>
+
+        <select name="brand_id" class="admin-form__select">
+            <option value="" disabled selected>Бренд</option>
+            <?php foreach ($brands as $brand): ?>
+                <option value="<?= $brand['id'] ?>" <?= ($old_input["brand_id"] ?? '') == $brand['id'] ? 'selected' : '' ?>><?= htmlspecialchars($brand['name']) ?></option>
+            <?php endforeach ?>
+        </select>
+
+        <button type="submit" class="admin-form__submit">ДОБАВИТЬ</button>
+    </form>
+</div>
+
 <script>
-    function previewImage(input) {
-        const preview = document.getElementById('preview');
-        const clearBtn = document.getElementById('clear-btn');
+    const imgInput = document.getElementById('imgInput');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const uploadRemove = document.getElementById('uploadRemove');
 
-        if (input.files && input.files[0]) {
+    imgInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
             const reader = new FileReader();
-
             reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-                input.style.display = 'none';
-                clearBtn.style.display = 'block';
+                uploadPreview.src = e.target.result;
+                uploadPreview.classList.add('is-visible');
+                uploadPlaceholder.style.display = 'none';
+                uploadRemove.classList.add('is-visible');
             }
-
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            preview.src = '';
-            preview.style.display = 'none';
+            reader.readAsDataURL(this.files[0]);
         }
-    }
+    });
 
-    function clearFile() {
-        const input = document.getElementById('img');
-        const preview = document.getElementById('preview');
-        const clearBtn = document.getElementById('clear-btn');
+    uploadRemove.addEventListener('click', function(e) {
+        e.stopPropagation();
+        imgInput.value = '';
+        uploadPreview.src = '';
+        uploadPreview.classList.remove('is-visible');
+        uploadPlaceholder.style.display = 'flex';
+        uploadRemove.classList.remove('is-visible');
+    });
 
-        input.value = ''; // сбрасываем поле
-        preview.src = ''; // убираем картинку
-        preview.style.display = 'none'; // прячем превью
-        input.style.display = 'block'; // прячем превью
-        clearBtn.style.display = 'none'; // прячем крестик
-    }
+    document.getElementById('productForm').addEventListener('submit', function(e) {
+        if (!imgInput.value) {
+            e.preventDefault();
+            alert('Выберите изображение товара');
+        }
+    });
 </script>

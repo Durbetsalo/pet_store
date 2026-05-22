@@ -1,0 +1,156 @@
+.access-denied-page {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+.access-denied-page__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 4rem;
+    max-width: 50%;
+}
+
+.access-denied-page__logo {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.access-denied-page__inner {
+    max-width: 440px;
+    margin: auto;
+}
+
+.access-denied-page__error {
+    font-size: 12rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.access-denied-page__sign {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    margin: 0 0.05em;
+    vertical-align: middle;
+}
+
+.access-denied-page__sign img {
+    width: 100%;
+    height: 100%;
+}
+
+.access-denied-page__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+}
+
+.access-denied-page__text {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.access-denied-page__btn {
+    display: inline-flex;
+    width: 100%;
+    /* max-width: 300px; */
+}
+
+.access-denied-page__image {
+    height: 100vh;
+    flex: 1;
+    max-width: 50%;
+    overflow: hidden;
+}
+
+.access-denied-page__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+    .access-denied-page__title{
+        font-size: 1.5rem;
+    }
+    .access-denied-page__sign{
+        width: 0.7em;
+        height: 0.7em;
+    }
+    .access-denied-page__content {
+        padding: 2rem 3rem;
+    }
+
+    .access-denied-page__error {
+        font-size: 8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .access-denied-page {
+        flex-direction: column;
+    }
+
+    .access-denied-page__content {
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+        min-height: auto;
+    }
+
+    .access-denied-page__logo {
+        margin-bottom: 2rem;
+    }
+
+    .access-denied-page__error {
+        font-size: 12rem;
+        margin-bottom: 1rem;
+    }
+
+    .access-denied-page__title {
+        font-size: 2rem;
+    }
+
+    .access-denied-page__image {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) { 
+    .access-denied-page__title {
+        font-size: 1.2rem;
+    }
+    .access-denied-page__content {
+        padding: 1.5rem 1rem;
+    }
+
+    .access-denied-page__error {
+        font-size: 9rem;
+    }
+
+    .access-denied-page__text {
+        font-size: 0.70rem;
+    }
+    .access-denied-page__btn{
+        font-size: 0.70rem;
+    }
+}
+@media (max-width: 320px) { 
+    .access-denied-page__inner{
+        transform: scale(0.8);
+    }
+}

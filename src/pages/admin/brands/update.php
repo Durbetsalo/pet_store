@@ -79,8 +79,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    
-    
     if (!empty($error)) {
         $_SESSION["error"] = $error;
         $_SESSION["old_input"] = [
@@ -96,7 +94,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     header("Location: /admin/$table");
 }
-print_r($_SESSION["old_input"]);
 
 $input_error = $_SESSION["error"] ?? [];
 $old_input = $_SESSION["old_input"] ?? $result;
